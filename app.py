@@ -14,7 +14,7 @@ except ImportError:
 
 app = Flask(__name__)
 
-LOG_FILE = os.path.join(os.path.dirname(__file__), "logs", "requests.csv")
+LOG_FILE = os.path.join("/tmp", "gary_journal_requests.csv")
 
 # Known bot/crawler user-agent substrings (case-insensitive)
 BOT_UA_PATTERNS = [
@@ -145,7 +145,6 @@ ARTICLES = {p["slug"]: p for p in POSTS}
 # ---------------------------------------------------------------------------
 
 def _ensure_log():
-    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
     if not os.path.exists(LOG_FILE):
         with open(LOG_FILE, "w", newline="") as f:
             writer = csv.writer(f)
