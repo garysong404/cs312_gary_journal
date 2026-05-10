@@ -145,6 +145,7 @@ ARTICLES = {p["slug"]: p for p in POSTS}
 # ---------------------------------------------------------------------------
 
 def _ensure_log():
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
     if not os.path.exists(LOG_FILE):
         with open(LOG_FILE, "w", newline="") as f:
             writer = csv.writer(f)
