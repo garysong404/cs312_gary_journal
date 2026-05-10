@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}maya's journal{% endblock %}
+{% block content %}
+{% for post in posts %}
+<div class="post-item">
+  <div class="date">{{ post.date }}</div>
+  <h2><a href="/posts/{{ post.slug }}">{{ post.title }}</a></h2>
+  <p class="preview">{{ post.preview }}</p>
+</div>
+{% endfor %}
+{% endblock %}

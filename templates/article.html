@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — maya's journal{% endblock %}
+{% block content %}
+<article>
+  <div class="date">{{ date }}</div>
+  <h1>{{ title }}</h1>
+  <br>
+  {{ body | safe }}
+</article>
+{% endblock %}

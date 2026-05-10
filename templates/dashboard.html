@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scraper Detection Dashboard</title>
+  <style>
+    body { font-family: monospace; max-width: 1200px; margin: 30px auto; padding: 0 20px; background: #0d1117; color: #c9d1d9; }
+    h1 { color: #58a6ff; }
+    .stats { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+    .stat { background: #161b22; border: 1px solid #30363d; padding: 16px 24px; border-radius: 6px; }
+    .stat .n { font-size: 2em; font-weight: bold; color: #58a6ff; }
+    .stat.warn .n { color: #f0883e; }
+    .stat.danger .n { color: #f85149; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
+    th { background: #161b22; padding: 8px; text-align: left; border-bottom: 2px solid #30363d; color: #8b949e; }
+    td { padding: 6px 8px; border-bottom: 1px solid #21262d; vertical-align: top; word-break: break-all; }
+    tr.bot { background: #2d1919; }
+    tr.honeypot { background: #2d2019; }
+    .badge { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 0.75em; }
+    .badge.bot { background: #f85149; color: #fff; }
+    .badge.human { background: #3fb950; color: #000; }
+    .badge.trap { background: #f0883e; color: #000; }
+    a { color: #58a6ff; }
+  </style>
+</head>
+<body>
+<h1>Scraper Detection Dashboard</h1>
+
+<div class="stats">
+  <div class="stat">
+    <div class="n">{{ stats.total_requests }}</div>
+    <div>Total requests</div>
+  </div>
+  <div class="stat">
+    <div class="n">{{ stats.human_requests }}</div>
+    <div>Human visitors</div>
+  </div>
+  <div class="stat warn">
+    <div class="n">{{ stats.bot_requests }}</div>
+    <div>Bot requests</div>
+  </div>
+  <div class="stat danger">
+    <div class="n">{{ stats.honeypot_hits }}</div>
+    <div>Honeypot (/secret) hits</div>
+  </div>
+  <div class="stat danger">
+    <div class="n">{{ stats.robots_txt_violations }}</div>
+    <div>robots.txt violations (bots)</div>
+  </div>
+</div>
+
+<p><a href="/api/logs">Download raw JSON logs</a></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Time (UTC)</th>
+      <th>IP</th>
+      <th>Method</th>
+      <th>Path</th>
+      <th>Status</th>
+      <th>Type</th>
+      <th>Reason</th>
+      <th>User-Agent</th>
+      <th>ms</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr class="{% if r.path == '/secret' %}honeypot{% elif r.is_bot == 'True' %}bot{% endif %}">
+      <td>{{ r.timestamp }}</td>
+      <td>{{ r.ip }}</td>
+      <td>{{ r.method }}</td>
+      <td>{{ r.path }}{% if r.path == '/secret' %} <span class="badge trap">TRAP</span>{% endif %}</td>
+      <td>{{ r.status_code }}</td>
+      <td>
+        {% if r.is_bot == 'True' %}
+          <span class="badge bot">BOT</span>
+        {% else %}
+          <span class="badge human">human</span>
+        {% endif %}
+      </td>
+      <td>{{ r.bot_reason }}</td>
+      <td>{{ r.user_agent }}</td>
+      <td>{{ r.response_ms }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</body>
+</html>
